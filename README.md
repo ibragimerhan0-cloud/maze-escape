@@ -82,7 +82,23 @@ The starter code, input generator, example checker, renderer, and benchmark were
 
 ## Timing (Mission 7)
 
-TIMING_PENDING
+Measured with the unchanged supplied `Bench` class, five runs for every size and algorithm. Values are milliseconds; the last column is the average printed by Bench.
+
+Environment: OpenJDK 17.0.20, Linux x86_64, AMD EPYC 9V74 virtual CPU, 1 GiB maximum Java heap. These measurements are from the preparation environment, not the student's laptop.
+
+```bash
+java -Xmx1g -cp out Bench
+```
+
+| Maze | Kruskal: 5 runs (ms) | Average (ms) | Prim: 5 runs (ms) | Average (ms) |
+|---|---|---:|---|---:|
+| 100 x 100 | 19, 10, 15, 21, 20 | 17 | 21, 6, 8, 6, 5 | 9 |
+| 300 x 300 | 119, 89, 61, 63, 55 | 78 | 85, 69, 75, 73, 85 | 77 |
+| 1000 x 1000 | 1173, 1360, 1200, 1283, 1359 | 1275 | 2458, 2550, 2500, 2476, 2515 | 2500 |
+
+Increasing each side of the maze increases the number of cells quadratically, so both algorithms take much longer on large grids. Both have O(n*log n) time on this grid, but sorting and priority-queue work have different constant costs; Kruskal was faster on the largest case here. JVM warm-up, garbage collection, and scheduling affect the small cases, so these measurements illustrate growth without proving a complexity bound.
+
+Raw benchmark output: `output/benchmark.txt`.
 
 ## Complexity
 
