@@ -6,6 +6,8 @@
  * to visit them in the required order, go through the four cells above one by one and take those that are in the list.
  * The program must not overflow the stack on a maze of 1000 by 1000 cells.
  */
+import java.util.Arrays;
+
 public class Escape {
 
     /**
@@ -16,7 +18,50 @@ public class Escape {
     public record Result(int[] path, int visited, int deadEnds) {}
 
     public static Result escape(Input.Walls w, int[] broken) {
-        // TODO
-        return new Result(new int[0], 0, 0);
+        int n = w.cells();
+        int[][] neighbours = Graphs.open(w, broken);
+        int deadEnds = 0;
+        for (int[] list : neighbours) {
+            if (list.length == 1) deadEnds++;
+        }
+        if (n == 0) return new Result(new int[0], 0, deadEnds);
+
+        boolean[] seen = new boolean[n];
+        int[] nextDirection = new int[n];
+        int[] stack = new int[n];
+        int top = 0;
+        stack[0] = 0;
+        seen[0] = true;
+        int visited = 1;
+
+        while (top >= 0) {
+            int u = stack[top];
+            if (u == n - 1) {
+                return new Result(Arrays.copyOf(stack, top + 1), visited, deadEnds);
+            }
+            if (nextDirection[u] == 4) {
+                top--;
+                continue;
+            }
+
+            int direction = nextDirection[u]++;
+            int next = switch (direction) {
+                case 0 -> u >= w.cols() ? u - w.cols() : -1;
+                case 1 -> u % w.cols() + 1 < w.cols() ? u + 1 : -1;
+                case 2 -> u + w.cols() < n ? u + w.cols() : -1;
+                default -> u % w.cols() > 0 ? u - 1 : -1;
+            };
+            if (next == -1 || seen[next]) continue;
+
+            for (int v : neighbours[u]) {
+                if (v == next) {
+                    seen[v] = true;
+                    visited++;
+                    stack[++top] = v;
+                    break;
+                }
+            }
+        }
+        return new Result(new int[0], visited, deadEnds);
     }
 }
