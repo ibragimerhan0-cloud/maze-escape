@@ -76,7 +76,7 @@ Kosaraju assigns the zones in topological order: every edge between different zo
 
 ## AI use
 
-OpenAI ChatGPT was used to draft the Java implementations, additional tests, README explanations, and the launch guide. It ran the provided checks and benchmark in its Linux environment. The code and report are AI-assisted drafts: the student must review, adapt, and understand them before submission, as required by the assignment.
+OpenAI ChatGPT was used to draft the Java implementations and README explanations, and to help test and review the solution. It ran the provided checks and benchmark in its Linux environment. The code and report are AI-assisted drafts: the student must review, adapt, and understand them before submission, as required by the assignment.
 
 The starter code, input generator, example checker, renderer, and benchmark were supplied by the course. No third-party graph or DSU library was used. Local commits are attributed to ChatGPT and record the preparation of this draft.
 
@@ -98,8 +98,6 @@ java -Xmx1g -cp out Bench
 
 Increasing each side of the maze increases the number of cells quadratically, so both algorithms take much longer on large grids. Both have O(n*log n) time on this grid, but sorting and priority-queue work have different constant costs; Kruskal was faster on the largest case here. JVM warm-up, garbage collection, and scheduling affect the small cases, so these measurements illustrate growth without proving a complexity bound.
 
-Raw benchmark output: `output/benchmark.txt`.
-
 ## Complexity
 
 n is the number of cells; m is the number of walls or slides. k is the number of zones, and e is the number of distinct edges between zones. Space includes auxiliary graph structures and returned results, but excludes the supplied input arrays.
@@ -117,23 +115,6 @@ n is the number of cells; m is the number of walls or slides. k is the number of
 | Route in the zone graph | O(k+e) for the pass; expected O(n+m) including construction | O(k+e) | Topological zone IDs; expected O(1) hash-map operations |
 
 alpha(n) is the inverse Ackermann function; it grows extremely slowly. In a grid m = O(n), so both MST implementations take O(n*log n) time and O(n) space.
-
-## Verification
-
-- `java tools/Check.java`: all DSU checks pass, and all 13 lines match for each of `tiny`, `small`, and `dag`.
-- Additional checks compare 49 small grids against a simple MST reference and a recursive DFS reference.
-- 150 random slide graphs are checked with all-pairs reachability and Bellman-Ford reference results.
-- Additional cases cover parallel slides, incoming zones unreachable from the start, one-cell grids, and route costs greater than the int range.
-- A 1000 x 1000 snake maze reaches DFS depth 999001 without stack overflow.
-- Kosaraju handles a directed chain of 1000000 cells without recursion.
-
-To repeat the additional checks after compiling:
-
-```bash
-java -Xmx1g -Xss256k -cp out tools/ExtraChecks.java
-```
-
-The recursive DFS above is only a small-input reference in the test file. All submitted traversal implementations in `src` are iterative. Raw results are in `output/checks.txt` and `output/extra-checks.txt`.
 
 ## Before submission
 
